@@ -13,7 +13,7 @@ bin/
 gen/
 
 # Gradle files
-.gradle/
+.gradle
 build/
 
 # Local configuration file (sdk path, etc)
@@ -24,3 +24,8 @@ proguard/
 
 # Log Files
 *.log
+
+# Misc
+/.idea/
+.DS_Store
+*.iml
