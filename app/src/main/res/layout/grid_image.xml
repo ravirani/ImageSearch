@@ -17,11 +17,16 @@
         android:id="@+id/ivImage" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/default_image_title"
+        android:fontFamily="san-serif-light"
+        android:textSize="12sp"
+        android:background="@android:color/white"
+        android:textColor="#FF666666"
         android:layout_gravity="center"
-        android:maxLines="1"
+        android:padding="5dp"
+        android:maxLines="2"
         android:ellipsize="end"
         android:id="@+id/tvTitle" />
 

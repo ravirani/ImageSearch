@@ -46,7 +46,7 @@ public class ImagesAdapter extends ArrayAdapter<Image> {
         }
 
         viewHolder.ivImage.setImageResource(0);
-        Picasso.with(getContext()).load(image.fullURL).into(viewHolder.ivImage);
+        Picasso.with(getContext()).load(image.thumbnailURL).into(viewHolder.ivImage);
         viewHolder.tvTitle.setText(image.title);
         return convertView;
     }
