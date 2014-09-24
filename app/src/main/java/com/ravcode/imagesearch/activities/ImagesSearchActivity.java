@@ -35,11 +35,16 @@ import java.util.ArrayList;
 
 public class ImagesSearchActivity extends FragmentActivity implements SearchView.OnQueryTextListener, AdvancedImageFiltersFragment.OnAdvancedImageFiltersSetListener {
 
-    static String IMAGE_URL_INTENT_KEY = "image_url";
     private static final String GOOGLE_IMAGE_SEARCH_URL = "https://ajax.googleapis.com/ajax/services/search/images?";
+
+    static String IMAGE_URL_INTENT_KEY = "image_url";
+    static String IMAGE_WIDTH_INTENT_KEY = "image_width";
+    static String IMAGE_HEIGHT_INTENT_KEY = "image_height";
+
     private StaggeredGridView gvImageResults;
     private ArrayList<Image> images;
     private ImagesAdapter imagesAdapter;
+
     private String mLastSearchKeyword;
     private String mSize;
     private String mColor;
@@ -89,6 +94,8 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
                 Image selectedImage = images.get(position);
                 Intent intent = new Intent(ImagesSearchActivity.this, ImageActivity.class);
                 intent.putExtra(IMAGE_URL_INTENT_KEY, selectedImage.fullURL);
+                intent.putExtra(IMAGE_WIDTH_INTENT_KEY, selectedImage.width);
+                intent.putExtra(IMAGE_HEIGHT_INTENT_KEY, selectedImage.height);
                 startActivity(intent);
             }
         });
