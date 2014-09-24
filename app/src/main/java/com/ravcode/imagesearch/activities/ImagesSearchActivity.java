@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -116,6 +118,13 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
     }
 
     private void performSearch(String query, int page) {
+
+        // Before going any further, first check if we have internet connectivity
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "Cannot complete this request. Please check your internet connection or try again later.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // Create the network client
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -188,6 +197,14 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
                 }
 
                 super.onSuccess(statusCode, headers, response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // Handle the failure and alert the user to retry
+                Log.e("ERROR", throwable.toString());
+                String errorMessage = "Error completing this request. Details - " + throwable.toString();
+                Toast.makeText(ImagesSearchActivity.this, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -266,5 +283,12 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
                 performSearch(keyword, page);
             }
         });
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }
