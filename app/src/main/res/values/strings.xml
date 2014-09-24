@@ -12,5 +12,13 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="action_search">Search</string>
     <string name="search_hint">Search Images</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="site_name_label">Site Name:</string>
+    <string name="image_type_label">Image Type:</string>
+    <string name="image_color_label">Image Color:</string>
+    <string name="image_size_label">Image Size:</string>
+    <string name="advanced_filters_title">Advanced Filters</string>
+    <string name="set_filter_button_title">Save</string>
+    <string name="action_filters">Filters</string>
 
 </resources>
