@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +48,7 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
     private ArrayList<Image> images;
     private ImagesAdapter imagesAdapter;
 
+    private SearchView mSearchView;
     private String mLastSearchKeyword;
     private String mSize;
     private String mColor;
@@ -110,9 +112,15 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextListener(this);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView)searchItem.getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setOnQueryTextListener(this);
+        if (mLastSearchKeyword != null) {
+            searchItem.expandActionView();
+            mSearchView.setQuery(mLastSearchKeyword, false);
+            mSearchView.clearFocus();
+        }
 
         return true;
     }
@@ -139,7 +147,7 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         requestParams.put("rsz", responseSize);
 
         // Keyword
-        if (query == null) {
+        if (query == null || TextUtils.isEmpty(query)) {
             Toast.makeText(this, "Keyword cannot be empty. Please enter one above.", Toast.LENGTH_LONG).show();
             return;
         }
