@@ -37,7 +37,7 @@ Except for image sharing and ability to zoom or pan images, all required and adv
 
 ### Walkthrough of all user stories:
 <br />
-![Video Walkthrough](AndroidInstagramViewerApp.gif)
+![Video Walkthrough](AndroidImageSearchApp.gif)
 <br />
 <br />
 
