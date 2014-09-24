@@ -20,6 +20,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.ravcode.imagesearch.R;
+import com.ravcode.imagesearch.activities.util.EndlessScrollListener;
 import com.ravcode.imagesearch.adapters.ImagesAdapter;
 import com.ravcode.imagesearch.fragments.AdvancedImageFiltersFragment;
 import com.ravcode.imagesearch.models.Image;
@@ -70,10 +71,13 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         // Link the adapter to the list view
         gvImageResults.setAdapter(imagesAdapter);
 
+        // Add scroll listener
+        addScrollListener();
+
         // Read preferences & perform default search
         readFromPreferences();
         if (mLastSearchKeyword != null) {
-            performSearch(mLastSearchKeyword);
+            performSearch(mLastSearchKeyword, 0);
         }
     }
 
@@ -104,7 +108,7 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         return true;
     }
 
-    private void performSearch(String query) {
+    private void performSearch(String query, int page) {
         // Create the network client
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -115,7 +119,8 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         requestParams.put("v", "1.0");
 
         // Response size
-        requestParams.put("rsz", "8");
+        int responseSize = 8;
+        requestParams.put("rsz", responseSize);
 
         // Keyword
         if (query == null) {
@@ -145,6 +150,19 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
             requestParams.put("as_sitesearch", mSite);
         }
 
+        // Page
+        // The logic here is very much custom to Google search API
+        // It only allows the startIndex to be set up to a certain value
+        int startIndex = page * 8;
+        if (startIndex <= 56) {
+            requestParams.put("start", startIndex);
+        }
+        else {
+            return;
+        }
+
+        final int requestedPage = page;
+
         // Make the GET request
         client.get(GOOGLE_IMAGE_SEARCH_URL, requestParams, new JsonHttpResponseHandler() {
 
@@ -153,7 +171,9 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
 
                 try {
                     JSONArray imageResultsJSON = response.getJSONObject("responseData").getJSONArray("results");
-                    imagesAdapter.clear();
+                    if (requestedPage == 0) {
+                        imagesAdapter.clear();
+                    }
                     imagesAdapter.addAll(Image.fromJSONArray(imageResultsJSON));
                 }
                 catch (JSONException e) {
@@ -180,7 +200,7 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        performSearch(s);
+        performSearch(s, 0);
         hideSoftKeyboard(getCurrentFocus());
         return true;
     }
@@ -203,7 +223,7 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         mSite = siteName;
 
         String keyword = mLastSearchKeyword != null ? mLastSearchKeyword : "";
-        performSearch(keyword);
+        performSearch(keyword, 0);
     }
 
     public void onAdvancedFiltersOpen(MenuItem item) {
@@ -229,6 +249,15 @@ public class ImagesSearchActivity extends FragmentActivity implements SearchView
         mColor = sharedPref.getString(PREF_COLOR, null);
         mType = sharedPref.getString(PREF_TYPE, null);
         mSite = sharedPref.getString(PREF_SITE, null);
+    }
 
+    private void addScrollListener() {
+        gvImageResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                String keyword = mLastSearchKeyword != null ? mLastSearchKeyword : "";
+                performSearch(keyword, page);
+            }
+        });
     }
 }

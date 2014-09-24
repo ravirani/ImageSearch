@@ -24,8 +24,14 @@ public class ImagesAdapter extends ArrayAdapter<Image> {
         ImageView ivImage;
     }
 
+    protected int serverListSize = -1;
+
     public ImagesAdapter(Context context, List<Image> objects) {
         super(context, R.layout.grid_image, objects);
+    }
+
+    public void setServerListSize(int serverListSize){
+        this.serverListSize = serverListSize;
     }
 
     @Override
